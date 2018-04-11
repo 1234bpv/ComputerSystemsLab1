@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace ComputerSystemsLab1._1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int FileNumber = ImputFileNumber();
+            ReadFromFile(FileNumber);
+            Console.ReadKey();
+        }
+        static int ImputFileNumber()//Метод, що дозволяє ввести кількість елеентів булевої функції
+        {
+            int a = 0;
+            do
+            {
+                Console.WriteLine("Введiть номер файлу");
+            }
+            while (!Int32.TryParse(Console.ReadLine(), out a) || a <= 0);
+            return a;
+        }
+        static void ReadFromFile(int a)
+        {
+            string t = " ";
+            if (a == 1001)
+            {
+                t = "c:\\а.txt";
+            }
+            if (a == 1002)
+            {
+                t = "c:\\b.txt";
+            }
+            if (a == 1003)
+            {
+                t = "c:\\c.txt";
+            }
+            if (a == 1004)
+            {
+                t = "c:\\4.txt";
+            }
+            if (a == 1005)
+            {
+                t = "c:\\5.txt";
+            }
+            if (a == 1006)
+            {
+                t = "c:\\6.txt";
+            }
+            StreamReader objReader = new StreamReader(t);
+            string s = "";
+            s = objReader.ReadToEnd();
+            objReader.Close();
+            char[] myArr;//Зберігає весь текстовий файл
+            myArr = s.ToCharArray();
+            List<char> UniqueChars = new List<char>();//Зберігає список всіх букв що зустрічаються в тексті
+            List<double> NumberOfElements = new List<double>();//Зберігає кількості відповідних за номерами букв
+            for (int i = 0; i < myArr.Length; i++)
+            {
+                bool b = false;//Чи зустрічався теперішній символ раніше
+                for (int j = 0; j < UniqueChars.Count(); j++)
+                {
+                    if (myArr[i] == UniqueChars[j])
+                    {
+                        NumberOfElements[j]++;//Збільшуємо кількість елементів вибраного символу
+                        b = true;
+                        break;
+                    }
+                }
+                if (!b)
+                {
+                    UniqueChars.Add(myArr[i]);
+                    NumberOfElements.Add(1);
+                }
+            }
+            Console.WriteLine("Символ - iмовiрнiсть появи");
+            double entropy = 0;
+            for (int i = 0; i < UniqueChars.Count(); i++)
+            {
+                Console.Write("\""+UniqueChars[i]+"\" - ");
+                Console.WriteLine(NumberOfElements[i] / myArr.Length);
+                entropy = entropy + (NumberOfElements[i] / myArr.Length) * Math.Log(1 / (NumberOfElements[i] / myArr.Length), 2);
+            }
+            Console.WriteLine("Середня ентропiя нерiвноймовiрного алфавiту: " + entropy);
+            Console.WriteLine("Кiлькiсть iнформацiї в текстi: " + entropy*UniqueChars.Count());
+        }
+    }
+}
