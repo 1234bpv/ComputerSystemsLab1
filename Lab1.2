@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace ComputerSystemsLab1._1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int FileNumber = ImputFileNumber();
+            ReadFromFile(FileNumber);
+            Console.ReadKey();
+        }
+        static int ImputFileNumber()//Метод, що дозволяє ввести кількість елеентів булевої функції
+        {
+            int a = 0;
+            do
+            {
+                Console.WriteLine("Введiть номер файлу");
+            }
+            while (!Int32.TryParse(Console.ReadLine(), out a) || a <= 0);
+            return a;
+        }
+        static void ReadFromFile(int a)
+        {
+            string t = " ";
+            if (a == 1001)
+            {
+                t = "c:\\а5.txt.bz2";
+            }
+            if (a == 1002)
+            {
+                t = "c:\\b5.txt.bz2";
+            }
+            if (a == 1003)
+            {
+                t = "c:\\c5.txt.bz2";
+            }
+            if (a == 1004)
+            {
+                t = "c:\\4.txt";
+            }
+            if (a == 1005)
+            {
+                t = "c:\\5.txt";
+            }
+            if (a == 1006)
+            {
+                t = "c:\\6.txt";
+            }
+            //Перетворення в binary
+            byte[] bytes = File.ReadAllBytes(t);
+            bool[] bits = new bool[bytes.Length * 8];
+            int c = 0;
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                c = bytes[i];
+                int k = 128;
+                for (int j = 0; j < 8; j++)
+                {
+                    if (k <= c)
+                    {
+                        bits[i * 8 + j] = true;
+                        c = c - k;
+                    }
+                    else
+                    {
+                        bits[i * 8 + j] = false;
+                    }
+                    k = k / 2;
+                }
+            }
+            //Далі перетворення в base64
+            char[] chars = new char[] {'A','B','C','D','E','F','G','H',
+            'I','J','K','L','M','N','O','P','Q','R','S','T','U','V',
+            'W','X','Y','Z','a','b','c','d','e','f','g','h','i','j',
+            'k','l','m','n','o','p','q','r','s','t','u','v','w','x',
+            'y','z','0','1','2','3','4','5','6','7','8','9','+','/'};
+            int rest = bytes.Length % 3;
+            bool[] bitz;//Доповнений  бінарний масив
+            if (rest == 1)
+            {
+                bitz = new bool[bits.Length + 16];
+            }
+            if (rest == 2)
+            {
+                bitz = new bool[bits.Length + 8];
+            }
+            else 
+            {
+                bitz = new bool[bits.Length];
+            }
+            for (int i = 0; i < bits.Length; i++)
+            {
+                bitz[i] = bits[i];
+            }
+            char[] base64 = new char[bitz.Length / 6];
+            for (int i = 0; i < bitz.Length; i = i + 24)
+            {
+                for (int j = 0; j < 24; j = j + 6)
+                {
+                    int num = 0;
+                    int bin = 32;
+                    for (int k = 0; k < 6; k++)
+                    {
+                        if (bitz[i + j + k] == true)
+                        {
+                            num = num + bin;
+                        }
+                        bin = bin / 2;
+                    }
+                    base64[(i + j) / 6] = chars[num];
+                }
+            }
+            if (rest == 1)
+            {
+                base64[base64.Length - 2] = '=';
+                base64[base64.Length - 1] = '=';
+            }
+            if (rest == 2)
+            {
+                base64[base64.Length - 1] = '=';
+            }
+            Console.WriteLine(base64);
+            Console.WriteLine(System.Convert.ToBase64String(bytes));
+            StreamWriter sw = new StreamWriter(@"C:\z.txt");
+            sw.WriteLine(base64);
+            sw.Close();
+        }
+    }
+}
