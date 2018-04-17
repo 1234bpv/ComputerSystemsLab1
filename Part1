@@ -86,7 +86,7 @@ namespace ComputerSystemsLab1._1
                 entropy = entropy + (NumberOfElements[i] / myArr.Length) * Math.Log(1 / (NumberOfElements[i] / myArr.Length), 2);
             }
             Console.WriteLine("Середня ентропiя нерiвноймовiрного алфавiту: " + entropy);
-            Console.WriteLine("Кiлькiсть iнформацiї в текстi: " + entropy*UniqueChars.Count());
+            Console.WriteLine("Кiлькiсть iнформацiї в текстi: " + entropy*UniqueChars.Count() / 8);
         }
     }
 }
